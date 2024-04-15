@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getAllContacts: async () => {
 				const store = getStore();
 				try {
-					let response = await fetch(`${store.urlBase}/agendas/deimian/contacts`)
+					let response = await fetch(`${store.urlBase}/agendas/cintia/contacts`)
 					if (response.status == 404) {
 						getActions().createAgenda()
 					} else {
@@ -41,7 +41,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			createAgenda: async () => {
 				const store = getStore()
 				try {
-					let responde = await fetch(`${store.urlBase}/agendas/deimian`)
+					let responde = await fetch(`${store.urlBase}/agendas/cintia`)
 					if (responde.status == 400) {
 						console.log("agenda existe")
 					} else {
@@ -57,27 +57,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				*/
 			},
 			createContact: async (contactData) => {
-				const store = getStore()
+				const store = getStore();
 				try {
-					const response = await fetch(`${store.urlBase}/agendas/deimian/contacts`,
-						{
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify(contactData),
-						}
-					);
-
+					const response = await fetch(`${store.urlBase}/agendas/cintia/contacts`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(contactData),
+					});
+			
 					if (response.ok) {
-						getActions().getAllContacts()
-						return true
+						await getActions().getAllContacts(); // Esperamos la actualización de los contactos antes de retornar true
+						return true;
+					} else {
+						// Aquí manejamos casos donde la respuesta no es OK (puede ser 400, 404, etc.)
+						console.error("Error creating contact:", response.status);
+						return false; // Retornamos false para indicar que hubo un error al guardar el usuario
 					}
-
 				} catch (error) {
 					console.error("Error creating contact:", error);
+					return false; // También manejamos errores de red o cualquier otro error
 				}
 			},
+			
 			deleteContact: async (contactId) => {
 				try {
 					const response = await fetch(
