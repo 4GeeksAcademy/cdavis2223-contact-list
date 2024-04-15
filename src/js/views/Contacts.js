@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { ContactCard } from "../component/ContactCard";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export const Contacts = () => {
     const { store, actions } = useContext(Context);
-
+    const navigate = useNavigate()
 
     return (
         <div className="container">
@@ -18,7 +18,7 @@ export const Contacts = () => {
                 <div id="contacts" className="panel-collapse collapse show" aria-expanded="true">
                     <ul className="list-group pull-down" id="contact-list">
                         {store.contacts.map(contact => (
-                            <ContactCard key={contact.id} contact={contact} onDelete={() => actions.deleteContact(contact.id)} />
+                            <ContactCard key={contact.id} contact={contact} onDelete={() => actions.deleteContact(contact.id)} onUpdate={() => navigate(`/edit/${contact.id}`)} />
                         ))}
                     </ul>
                 </div>

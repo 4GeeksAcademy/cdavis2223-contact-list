@@ -41,7 +41,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			createAgenda: async () => {
 				const store = getStore()
 				try {
-					let responde = await fetch(`${store.urlBase}/agendas/cintia`)
+					let responde = await fetch(`${store.urlBase}/agendas/cintia`, {method: "POST"})
 					if (responde.status == 400) {
 						console.log("agenda existe")
 					} else {
@@ -82,14 +82,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			deleteContact: async (contactId) => {
+				const actions = getActions()
+				const store = getStore()
 				try {
-					const response = await fetch(
-						`https://playground.4geeks.com/contact/${contactId}`,
-						{
-							method: "DELETE",
-						}
-					);
-					actions.fetchContacts();
+					const response = await fetch(`${store.urlBase}/agendas/cintia/contacts/${contactId}`, {method: "DELETE"});
+					if(response.ok){
+						actions.getAllContacts();
+						alert("Are you sure you want delete this contact?")
+					}
+					
 				} catch (error) {
 					console.error("Error deleting contact:", error);
 				}
@@ -97,9 +98,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			//es un objeto con los campos del contacto
 			updateContact: async (contactId, contactData) => {
+				const actions = getActions()
+				const store = getStore()
 				try {
 					const response = await fetch(
-						`https://playground.4geeks.com/contact/${contactId}`,
+						`${store.urlBase}/agendas/cintia/contacts/${contactId}`,
 						{
 							method: "PUT",
 							headers: {
@@ -109,7 +112,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					);
 					if (response.ok) {
-						getActions().fetchContacts();
+						actions.getAllContacts();
+						return true
 					} else {
 						console.error("Error updating contact:", response.status);
 					}
